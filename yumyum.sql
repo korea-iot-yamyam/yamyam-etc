@@ -2,58 +2,46 @@ DROP DATABASE `YAMYAM`;
 CREATE DATABASE `YAMYAM`;
 USE `YAMYAM`;
 
-CREATE TABLE `membership` (
-	`user_number`	INT	PRIMARY KEY AUTO_INCREMENT,
-	`user_id`	VARCHAR(255)	NOT NULL,
+CREATE TABLE `USER` (
+	`user_number`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
+	`user_id`	VARCHAR(255)	NOT NULL UNIQUE,
 	`user_pw`	VARCHAR(255)	NOT NULL,
 	`user_name`	VARCHAR(255)	NOT NULL,
-	`user_tel`	VARCHAR(255)	NOT NULL,
-	`user_email`	VARCHAR(255)	NOT NULL,
+	`user_email`	VARCHAR(255)	NOT NULL UNIQUE,
 	`user_birth`	VARCHAR(255)	NOT NULL,
     `user_phonenumber` VARCHAR(255) NOT NULL,
-	`user_business_number`	INT	NOT NULL,
+	`user_business_number`	INT	NOT NULL UNIQUE,
 	`user_privacy_policy`	BOOLEAN	NOT NULL,
 	`user_marketing`	BOOLEAN	NULL
 );
 
 CREATE TABLE `store` (
-	`store_number`	INT	PRIMARY KEY AUTO_INCREMENT,
-	`user_number`	INT	NOT NULL	COMMENT 'AUTO_INCREMENT',
+	`store_number`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
+	`user_number`	BIGINT	NOT NULL	COMMENT 'AUTO_INCREMENT',
 	`store_name`	VARCHAR(255)	NOT NULL,
 	`store_logo`	VARCHAR(255)	NOT NULL	COMMENT 'url 받아옴',
-	`store_category` ENUM('한식', '중식', '일식', '양식', '분식', '카페/베이커리'),
+	`store_category` ENUM('치킨', '중식', '돈까스/회', '피자', '패스트푸드', '찜/탕', '족발/보쌈', '분식', '카페/디저트', '한식', '고기', '양식', '아시안', '야식', '도시락'),
 	`store_open_time`	TIME	NOT NULL,
 	`store_close_time`	TIME	NOT NULL,
 	`store_break_start`	TIME	NULL,
 	`store_break_end`	TIME	NULL,
 	`store_address`	VARCHAR(255)	NULL	,
 	`store_description`	TEXT	NULL,
-    FOREIGN KEY (USER_NUMBER) REFERENCES `membership` (USER_NUMBER)
+    FOREIGN KEY (USER_NUMBER) REFERENCES `USER` (USER_NUMBER)
     
 );
 
 
-CREATE TABLE `Categories` (
-	`category_number`	INT PRIMARY KEY AUTO_INCREMENT	,
-	`store_number`	INT	NOT NULL	,
+CREATE TABLE `MENU_Categories` (
+	`category_number`	BIGINT PRIMARY KEY AUTO_INCREMENT	,
+	`store_number`	BIGINT	NOT NULL	,
 	`category`	VARCHAR(255)	NOT NULL,
     FOREIGN KEY (STORE_NUMBER) REFERENCES `STORE` (STORE_NUMBER)
 );
 
-CREATE TABLE `Menus` (
-	`menu_number`	INT	PRIMARY KEY AUTO_INCREMENT,
-	`category_number`	INT	NOT NULL	,
-	`menu_name`	VARCHAR(255)	NULL,
-	`menu_img`	VARCHAR(255)	NULL,
-	`menu_content`	VARCHAR(255)	NULL,
-    `menu_price`	INT		null,
-    `menu_count`	INT		null,
-    FOREIGN KEY (CATEGORY_NUMBER) REFERENCES `CATEGORIES` (CATEGORY_NUMBER)
-);
-
 CREATE TABLE `Orders` (
-	`order_number`	INT	PRIMARY KEY AUTO_INCREMENT,
-    `store_number`	INT NOT NULL,
+	`order_number`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
+    `store_number`	BIGINT NOT NULL,
 	`order_address`	VARCHAR(255)	NOT NULL,
 	`order_total_price`	INT	NOT NULL,
 	`order_date`	DATETIME	NOT NULL,
@@ -63,36 +51,76 @@ CREATE TABLE `Orders` (
 );
 
 CREATE TABLE `order_detail` (
-	`order_detail_number`	INT	PRIMARY KEY AUTO_INCREMENT,
-	`order_number`	INT	NOT NULL,
+	`order_detail_number`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
+    `ORDER_NUMBER` BIGINT NOT NULL,
+    `menu_number` BIGINT NOT NULL,
 	`order_product_name`	VARCHAR(255)	NOT NULL,
 	`order_quantity`	INT	NOT NULL,
-    FOREIGN KEY (ORDER_NUMBER) REFERENCES `ORDERS` (ORDER_NUMBER)
+    FOREIGN KEY (order_number) REFERENCES `ORDERS` (order_NUMBER)
+    
 );
-
+CREATE TABLE `Menus` (
+	`menu_number`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
+    `STORE_NUMBER` BIGINT NOT NULL,
+    `ORDER_DETAIL_NUMBER` BIGINT NOT NULL,
+	`category_number`	BIGINT	NOT NULL,
+	`menu_name`	VARCHAR(255)	NOT NULL,
+	`menu_img`	VARCHAR(255)	NULL,
+	`menu_description`	TEXT	NULL,
+    `menu_price`	INT		NOT null,
+    `menu_state` TINYINT NOT NULL,
+    FOREIGN KEY (CATEGORY_NUMBER) REFERENCES `MENU_CATEGORIES` (CATEGORY_NUMBER),
+    FOREIGN KEY (STORE_NUMBER) REFERENCES `STORE` (STORE_NUMBER),
+    FOREIGN KEY (order_detail_number) REFERENCES `ORDER_DETAIL` (order_detail_number)
+);
 CREATE TABLE `reviews` (
-	`review_number`	INT	PRIMARY KEY AUTO_INCREMENT,
-	`order_number`	INT	NOT NULL,
-	`user_id`	VARCHAR(255)	NOT NULL,
+	`review_number`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
+	`order_number`	BIGINT	NOT NULL,
+    `GUEST_NUMBER` BIGINT NOT NULL,
 	`review_rating`	INT	NULL,
 	`review_date`	DATE	NOT NULL,
 	`review_comments`	TEXT	NULL,
 	`review_report`	BOOLEAN	NOT NULL,
     FOREIGN KEY (ORDER_NUMBER) REFERENCES `ORDERS` (ORDER_NUMBER)
+    
 );
 
+
+CREATE TABLE `GUEST` (
+	`GUEST_NUMBER` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `ORDER_NUMBER` BIGINT NOT NULL,
+    `REVIEW_NUMBER` BIGINT NOT NULL,
+    `GUEST_NICKNAME` VARCHAR(255) UNIQUE,
+    `GUSET_IMG` VARCHAR(255),
+    
+    FOREIGN KEY (ORDER_NUMBER) REFERENCES `ORDERS` (ORDER_NUMBER),
+    FOREIGN KEY (REVIEW_NUMBER) REFERENCES `REVIEWS` (REVIEW_NUMBER)
+    
+);
+
+
+
 CREATE TABLE `reviews_photos` (
-	`review_number` INT	PRIMARY KEY AUTO_INCREMENT,
+	`review_number` BIGINT	NOT NULL,
 	`review_photo`	VARCHAR(255)	NULL,
     FOREIGN KEY (REVIEW_NUMBER) REFERENCES `REVIEWS` (REVIEW_NUMBER)
 );
 
 CREATE TABLE `REVIEW_EVENT_NOTICE` (
-	`STORE_NUMBER` INT,
+	`STORE_NUMBER` BIGINT,
 	`REVIEW_NOTICE_PHOTO` VARCHAR(255) NULL,
     `REVIEW_NOTICE_TEXT`	TEXT	NULL,
 	FOREIGN KEY (STORE_NUMBER) REFERENCES `STORE` (STORE_NUMBER)
 );
+
+CREATE TABLE `REVIEW_COMMENT` (
+	`REVIEW_NUMBER` BIGINT NOT NULL,
+	`COMMENT` VARCHAR(255),
+    `REVIEW_COMMENT_DATE` DATE NOT NULL,
+    FOREIGN KEY (REVIEW_NUMBER) REFERENCES `REVIEWS` (REVIEW_NUMBER)
+);
+
+
 
 # CREATE TABLE `period` (
 # 	`period_number`	INT	PRIMARY KEY AUTO_INCREMENT,
