@@ -2,84 +2,88 @@ DROP DATABASE `YAMYAM`;
 CREATE DATABASE `YAMYAM`;
 USE `YAMYAM`;
 
-CREATE TABLE `USER` (
-	`user_number`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE `USERS` (
+	`id`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
 	`user_id`	VARCHAR(255)	NOT NULL UNIQUE,
 	`user_pw`	VARCHAR(255)	NOT NULL,
 	`user_name`	VARCHAR(255)	NOT NULL,
 	`user_email`	VARCHAR(255)	NOT NULL UNIQUE,
 	`user_birth`	VARCHAR(255)	NOT NULL,
-    `user_phonenumber` VARCHAR(255) NOT NULL,
+    `user_phone` VARCHAR(255) NOT NULL,
 	`user_business_number`	INT	NOT NULL UNIQUE,
-	`user_privacy_policy`	BOOLEAN	NOT NULL,
-	`user_marketing`	BOOLEAN	NULL
+	`privacy_policy_agreed`	BOOLEAN	NOT NULL DEFAULT FALSE,
+	`marketing_agreed`	BOOLEAN
 );
 
-CREATE TABLE `store` (
-	`store_number`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
-	`user_number`	BIGINT	NOT NULL	COMMENT 'AUTO_INCREMENT',
+CREATE TABLE `STORES` (
+	`id`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
+	`owner_id`	BIGINT	NOT NULL,
 	`store_name`	VARCHAR(255)	NOT NULL,
-	`store_logo`	VARCHAR(255)	NOT NULL	COMMENT 'url 받아옴',
-	`store_category` ENUM('치킨', '중식', '돈까스/회', '피자', '패스트푸드', '찜/탕', '족발/보쌈', '분식', '카페/디저트', '한식', '고기', '양식', '아시안', '야식', '도시락'),
-	`store_open_time`	TIME	NOT NULL,
-	`store_close_time`	TIME	NOT NULL,
-	`store_break_start`	TIME	NULL,
-	`store_break_end`	TIME	NULL,
-	`store_address`	VARCHAR(255)	NULL	,
-	`store_description`	TEXT	NULL,
-    FOREIGN KEY (USER_NUMBER) REFERENCES `USER` (USER_NUMBER)
+	`logo_url`	VARCHAR(255)	NOT NULL,
+	`category` ENUM('치킨', '중식', '돈까스/회', '피자', '패스트푸드', '찜/탕', '족발/보쌈', '분식', '카페/디저트', '한식', '고기', '양식', '아시안', '야식', '도시락'),
+	`opening_time`	TIME	NOT NULL,
+	`closing_time`	TIME	NOT NULL,
+	`break_start_time`	TIME,
+	`break_end_time`	TIME,
+	`address`	VARCHAR(255),
+	`description`	TEXT,
+    FOREIGN KEY (owner_id) REFERENCES `USERS` (id)
     
 );
 
 
-CREATE TABLE `MENU_Categories` (
-	`category_number`	BIGINT PRIMARY KEY AUTO_INCREMENT	,
-	`store_number`	BIGINT	NOT NULL	,
+CREATE TABLE `MENU_CATEGORYS` (
+	`id`	BIGINT PRIMARY KEY AUTO_INCREMENT,
+	`store_id`	BIGINT	NOT NULL,
 	`category`	VARCHAR(255)	NOT NULL,
-    FOREIGN KEY (STORE_NUMBER) REFERENCES `STORE` (STORE_NUMBER)
+    FOREIGN KEY (store_id) REFERENCES `STORES` (id)
 );
 
-CREATE TABLE `Orders` (
-	`order_number`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
-    `store_number`	BIGINT NOT NULL,
-	`order_address`	VARCHAR(255)	NOT NULL,
-	`order_total_price`	INT	NOT NULL,
-	`order_date`	DATETIME	NOT NULL,
-    `order_state`	INT		NOT NULL,
-    `order_count`	INT		NOT NULL,
-    FOREIGN KEY (STORE_NUMBER) REFERENCES `STORE` (STORE_NUMBER)
+CREATE TABLE `ORDERS` (
+	`id`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
+    `store_id`	BIGINT NOT NULL,
+	`delivery_address`	VARCHAR(255)	NOT NULL,
+	`total_price`	INT	NOT NULL,
+	`order_date`	DATETIME	DEFAULT CURRENT_TIMESTAMP	 NOT NULL,
+    `order_state`	ENUM('0', '1', '2')		DEFAULT '0'		NOT NULL,
+    FOREIGN KEY (store_id) REFERENCES `STORES` (id)
 );
 
-CREATE TABLE `order_detail` (
-	`order_detail_number`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
-    `ORDER_NUMBER` BIGINT NOT NULL,
-    `menu_number` BIGINT NOT NULL,
+CREATE TABLE `MENUS` (
+	`id`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
+    `store_id` BIGINT NOT NULL,
+	`category_id`	BIGINT	NOT NULL,
+	`menu_name`	VARCHAR(255)	NOT NULL,
+	`image_url`	VARCHAR(255),
+	`menu_description`	TEXT,
+    `menu_price`	INT		NOT null,
+    `is_available` BOOLEAN 	DEFAULT TRUE	NOT NULL,
+    FOREIGN KEY (category_id) REFERENCES `MENU_CATEGORYS` (id),
+    FOREIGN KEY (store_id) REFERENCES `STORES` (id)
+);
+
+CREATE TABLE `ORDER_DETAILS` (
+	`id`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
+    `order_id` BIGINT NOT NULL,
+    `menu_id` BIGINT NOT NULL,
 	`order_product_name`	VARCHAR(255)	NOT NULL,
-	`order_quantity`	INT	NOT NULL,
-    FOREIGN KEY (order_number) REFERENCES `ORDERS` (order_NUMBER)
+	`quantity`	INT	NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES `ORDERS` (id),
+    FOREIGN KEY (menu_id) REFERENCES `MENUS` (id)
     
 );
-CREATE TABLE `Menus` (
-	`menu_number`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
-    `STORE_NUMBER` BIGINT NOT NULL,
-    `ORDER_DETAIL_NUMBER` BIGINT NOT NULL,
-	`category_number`	BIGINT	NOT NULL,
-	`menu_name`	VARCHAR(255)	NOT NULL,
-	`menu_img`	VARCHAR(255)	NULL,
-	`menu_description`	TEXT	NULL,
-    `menu_price`	INT		NOT null,
-    `menu_state` TINYINT NOT NULL,
-    FOREIGN KEY (CATEGORY_NUMBER) REFERENCES `MENU_CATEGORIES` (CATEGORY_NUMBER),
-    FOREIGN KEY (STORE_NUMBER) REFERENCES `STORE` (STORE_NUMBER),
-    FOREIGN KEY (order_detail_number) REFERENCES `ORDER_DETAIL` (order_detail_number)
-);
+
+
+-- ---------------------------------------------------------------------------------------------------
+
+
 CREATE TABLE `reviews` (
 	`review_number`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
 	`order_number`	BIGINT	NOT NULL,
     `GUEST_NUMBER` BIGINT NOT NULL,
-	`review_rating`	INT	NULL,
+	`review_rating`	INT,
 	`review_date`	DATE	NOT NULL,
-	`review_comments`	TEXT	NULL,
+	`review_comments`	TEXT,
 	`review_report`	BOOLEAN	NOT NULL,
     FOREIGN KEY (ORDER_NUMBER) REFERENCES `ORDERS` (ORDER_NUMBER)
     
@@ -90,7 +94,7 @@ CREATE TABLE `GUEST` (
 	`GUEST_NUMBER` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `ORDER_NUMBER` BIGINT NOT NULL,
     `REVIEW_NUMBER` BIGINT NOT NULL,
-    `GUEST_NICKNAME` VARCHAR(255) UNIQUE,
+    `GUEST_NICKNAME` VARCHAR(255) UNIQUE	NOT NULL,
     `GUSET_IMG` VARCHAR(255),
     
     FOREIGN KEY (ORDER_NUMBER) REFERENCES `ORDERS` (ORDER_NUMBER),
