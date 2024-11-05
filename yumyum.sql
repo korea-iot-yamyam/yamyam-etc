@@ -1,4 +1,4 @@
-DROP DATABASE `YAMYAM`;
+DROP DATABASE IF EXISTS `YAMYAM`;
 CREATE DATABASE `YAMYAM`;
 USE `YAMYAM`;
 
@@ -8,8 +8,7 @@ CREATE TABLE `users` (
 	`user_pw`	VARCHAR(255)	NOT NULL,
 	`user_name`	VARCHAR(255)	NOT NULL,
 	`user_email`	VARCHAR(255)	NOT NULL UNIQUE,
-	`user_birth`	VARCHAR(255)	NOT NULL,
-    `user_phone` VARCHAR(255) NOT NULL,
+    `user_phone` VARCHAR(30) NOT NULL,
 	`user_business_number`	INT	NOT NULL UNIQUE,
 	`privacy_policy_agreed`	BOOLEAN	NOT NULL DEFAULT FALSE,
 	`marketing_agreed`	BOOLEAN NOT NULL DEFAULT FALSE
@@ -27,7 +26,7 @@ CREATE TABLE `stores` (
 	`break_end_time`	TIME,
 	`address`	VARCHAR(255),
 	`description`	TEXT,
-    FOREIGN KEY (owner_id) REFERENCES `users` (id)
+    FOREIGN KEY (owner_id) REFERENCES `users` (id) ON DELETE CASCADE
     
 );
 
@@ -36,7 +35,7 @@ CREATE TABLE `menu_categorys` (
 	`id`	BIGINT PRIMARY KEY AUTO_INCREMENT,
 	`store_id`	BIGINT	NOT NULL,
 	`category`	VARCHAR(255)	NOT NULL,
-    FOREIGN KEY (store_id) REFERENCES `stores` (id)
+    FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
 );
 
 CREATE TABLE `orders` (
@@ -46,7 +45,7 @@ CREATE TABLE `orders` (
 	`total_price`	INT	NOT NULL,
 	`order_date`	DATETIME	DEFAULT CURRENT_TIMESTAMP	 NOT NULL,
     `order_state`	ENUM('0', '1', '2')		DEFAULT '0'		NOT NULL,
-    FOREIGN KEY (store_id) REFERENCES `stores` (id)
+    FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
 );
 
 CREATE TABLE `menus` (
@@ -58,8 +57,8 @@ CREATE TABLE `menus` (
 	`menu_description`	TEXT,
     `menu_price`	INT		NOT NULL,
     `is_available` BOOLEAN 	DEFAULT TRUE	NOT NULL,
-    FOREIGN KEY (category_id) REFERENCES `menu_categorys` (id),
-    FOREIGN KEY (store_id) REFERENCES `stores` (id)
+    FOREIGN KEY (category_id) REFERENCES `menu_categorys` (id) ON DELETE CASCADE,
+    FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
 );
 
 CREATE TABLE `order_details` (
@@ -68,8 +67,8 @@ CREATE TABLE `order_details` (
     `menu_id` BIGINT NOT NULL,
 	`order_product_name`	VARCHAR(255)	NOT NULL,
 	`quantity`	INT	NOT NULL,
-    FOREIGN KEY (order_id) REFERENCES `orders` (id),
-    FOREIGN KEY (menu_id) REFERENCES `menus` (id)
+    FOREIGN KEY (order_id) REFERENCES `orders` (id) ON DELETE CASCADE,
+    FOREIGN KEY (menu_id) REFERENCES `menus` (id) ON DELETE CASCADE
     
 );
 
@@ -78,7 +77,7 @@ CREATE TABLE `guests` (
     `order_id` BIGINT NOT NULL,
     `nickname` VARCHAR(255) UNIQUE	NOT NULL,
     `profile_image` VARCHAR(255),
-    FOREIGN KEY (order_id) REFERENCES `orders` (id)    
+    FOREIGN KEY (order_id) REFERENCES `orders` (id) ON DELETE CASCADE   
 );
 
 CREATE TABLE `reviews` (
@@ -89,15 +88,15 @@ CREATE TABLE `reviews` (
 	`review_date`	DATE	NOT NULL,
 	`review_comments`	TEXT,
 	`is_reported` BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (order_id) REFERENCES `orders` (id),
-    FOREIGN KEY (guest_id) REFERENCES `guests` (id)
+    FOREIGN KEY (order_id) REFERENCES `orders` (id) ON DELETE CASCADE,
+    FOREIGN KEY (guest_id) REFERENCES `guests` (id) ON DELETE CASCADE
 );
 
 CREATE TABLE `review_photos` (
 	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
 	`review_id` BIGINT	NOT NULL,
 	`photo_url`	VARCHAR(255),
-    FOREIGN KEY (review_id) REFERENCES `reviews` (id)
+    FOREIGN KEY (review_id) REFERENCES `reviews` (id) ON DELETE CASCADE
 );
 
 CREATE TABLE `review_event_notices` (
@@ -105,7 +104,7 @@ CREATE TABLE `review_event_notices` (
 	`store_id` BIGINT,
 	`notice_photo_url` VARCHAR(255),
     `notice_text`	TEXT,
-	FOREIGN KEY (store_id) REFERENCES `stores` (id)
+	FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
 );
 
 CREATE TABLE `review_comments` (
@@ -114,6 +113,6 @@ CREATE TABLE `review_comments` (
 	`comment_text` VARCHAR(255),
     `comment_date` DATE NOT NULL,
 	`is_admin_report` BOOLEAN DEFAULT FALSE,
-    FOREIGN KEY (review_id) REFERENCES `reviews` (id)
+    FOREIGN KEY (review_id) REFERENCES `reviews` (id) ON DELETE CASCADE
 );
 
