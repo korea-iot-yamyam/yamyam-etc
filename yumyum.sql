@@ -91,7 +91,7 @@ CREATE TABLE `reviews` (
     `guest_id` BIGINT NOT NULL,
 	`rating` INT, -- 별점
 	`review_date` DATE NOT NULL,
-	`review_comments` TEXT,
+	`review_content` TEXT,
 	`is_reported` BOOLEAN DEFAULT FALSE, -- 신고 기능
     FOREIGN KEY (order_id) REFERENCES `orders` (id) ON DELETE CASCADE,
     FOREIGN KEY (guest_id) REFERENCES `guests` (id) ON DELETE CASCADE
@@ -118,7 +118,7 @@ CREATE TABLE `review_event_notices` (
 CREATE TABLE `review_comments` (
 	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
 	`review_id` BIGINT NOT NULL,
-	`comment_text` VARCHAR(255),
+	`comment` TEXT NOT NULL,
     `comment_date` DATE NOT NULL,
     FOREIGN KEY (review_id) REFERENCES `reviews` (id) ON DELETE CASCADE
 );
