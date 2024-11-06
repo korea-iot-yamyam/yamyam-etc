@@ -80,7 +80,7 @@ CREATE TABLE `guests` (
 	`id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `order_id` BIGINT NOT NULL,
     `nickname` VARCHAR(255) NOT NULL UNIQUE,
-    `profile_image` VARCHAR(255),
+	`profile_image` TEXT DEFAULT "/images/profile/default.png",
     FOREIGN KEY (order_id) REFERENCES `orders` (id) ON DELETE CASCADE   
 );
 
