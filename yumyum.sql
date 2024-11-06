@@ -2,6 +2,7 @@ DROP DATABASE IF EXISTS `YAMYAM`;
 CREATE DATABASE `YAMYAM`;
 USE `YAMYAM`;
 
+-- 회원 정보 테이블
 CREATE TABLE `users` (
 	`id`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
 	`user_id`	VARCHAR(255)	NOT NULL UNIQUE,
@@ -10,10 +11,11 @@ CREATE TABLE `users` (
 	`user_email`	VARCHAR(255)	NOT NULL UNIQUE,
     `user_phone` VARCHAR(30) NOT NULL,
 	`user_business_number`	INT	NOT NULL UNIQUE,
-	`privacy_policy_agreed`	BOOLEAN	NOT NULL DEFAULT FALSE,
-	`marketing_agreed`	BOOLEAN NOT NULL DEFAULT FALSE
+	`privacy_policy_agreed`	BOOLEAN	NOT NULL DEFAULT FALSE, -- 개인 정보 동의
+	`marketing_agreed`	BOOLEAN NOT NULL DEFAULT FALSE -- 마케팅 수신 동의
 );
 
+-- 가게 정보 테이블
 CREATE TABLE `stores` (
 	`id`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
 	`owner_id`	BIGINT	NOT NULL,
@@ -30,14 +32,15 @@ CREATE TABLE `stores` (
     
 );
 
-
-CREATE TABLE `menu_categorys` (
+-- 메뉴별 카테고리 테이블 (인기 메뉴, 세트 메뉴, 사이드메뉴, 음료 ...)
+CREATE TABLE `menu_categories` (
 	`id`	BIGINT PRIMARY KEY AUTO_INCREMENT,
 	`store_id`	BIGINT	NOT NULL,
 	`category`	VARCHAR(255)	NOT NULL,
     FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
 );
 
+-- 주문 정보 테이블
 CREATE TABLE `orders` (
 	`id`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
     `store_id`	BIGINT NOT NULL,
@@ -48,6 +51,7 @@ CREATE TABLE `orders` (
     FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
 );
 
+-- 메뉴 정보 테이블
 CREATE TABLE `menus` (
 	`id`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
     `store_id` BIGINT NOT NULL,
@@ -57,10 +61,11 @@ CREATE TABLE `menus` (
 	`menu_description`	TEXT,
     `menu_price`	INT		NOT NULL,
     `is_available` BOOLEAN 	DEFAULT TRUE	NOT NULL,
-    FOREIGN KEY (category_id) REFERENCES `menu_categorys` (id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES `menu_categories` (id) ON DELETE CASCADE,
     FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
 );
 
+-- 주문 목록 내 주문 1개 상세 정보 테이블
 CREATE TABLE `order_details` (
 	`id`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
     `order_id` BIGINT NOT NULL,
@@ -72,6 +77,7 @@ CREATE TABLE `order_details` (
     
 );
 
+-- 손님 정보 테이블
 CREATE TABLE `guests` (
 	`id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `order_id` BIGINT NOT NULL,
@@ -80,11 +86,12 @@ CREATE TABLE `guests` (
     FOREIGN KEY (order_id) REFERENCES `orders` (id) ON DELETE CASCADE   
 );
 
+-- 리뷰 정보 테이블
 CREATE TABLE `reviews` (
 	`id`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
 	`order_id`	BIGINT	NOT NULL,
     `guest_id` BIGINT NOT NULL,
-	`rating`	INT,
+	`rating`	INT, -- 별점
 	`review_date`	DATE	NOT NULL,
 	`review_comments`	TEXT,
 	`is_reported` BOOLEAN DEFAULT FALSE,
