@@ -32,7 +32,9 @@ CREATE TABLE `stores` (
     
 );
 
+
 -- 메뉴별 카테고리 테이블 (인기 메뉴, 세트 메뉴, 사이드메뉴, 음료 ...)
+
 CREATE TABLE `menu_categories` (
 	`id`	BIGINT PRIMARY KEY AUTO_INCREMENT,
 	`store_id`	BIGINT	NOT NULL,
@@ -61,6 +63,7 @@ CREATE TABLE `menus` (
 	`menu_description`	TEXT,
     `menu_price`	INT		NOT NULL,
     `is_available` BOOLEAN 	DEFAULT TRUE	NOT NULL,
+
     FOREIGN KEY (category_id) REFERENCES `menu_categories` (id) ON DELETE CASCADE,
     FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
 );
@@ -122,4 +125,3 @@ CREATE TABLE `review_comments` (
 	`is_admin_report` BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (review_id) REFERENCES `reviews` (id) ON DELETE CASCADE
 );
-
