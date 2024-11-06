@@ -1,138 +1,124 @@
-DROP DATABASE `YAMYAM`;
+DROP DATABASE IF EXISTS `YAMYAM`;
 CREATE DATABASE `YAMYAM`;
 USE `YAMYAM`;
 
-CREATE TABLE `USER` (
-	`user_number`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
-	`user_id`	VARCHAR(255)	NOT NULL UNIQUE,
-	`user_pw`	VARCHAR(255)	NOT NULL,
-	`user_name`	VARCHAR(255)	NOT NULL,
-	`user_email`	VARCHAR(255)	NOT NULL UNIQUE,
-	`user_birth`	VARCHAR(255)	NOT NULL,
-    `user_phonenumber` VARCHAR(255) NOT NULL,
-	`user_business_number`	INT	NOT NULL UNIQUE,
-	`user_privacy_policy`	BOOLEAN	NOT NULL,
-	`user_marketing`	BOOLEAN	NULL
+-- 회원 정보 테이블
+CREATE TABLE `users` (
+	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
+	`user_id` VARCHAR(255) NOT NULL UNIQUE,
+	`user_pw` VARCHAR(255) NOT NULL,
+	`user_name`	VARCHAR(255) NOT NULL,
+	`user_email` VARCHAR(255) NOT NULL UNIQUE,
+    `user_phone` VARCHAR(30) NOT NULL,
+	`user_business_number` INT NOT NULL UNIQUE,
+	`privacy_policy_agreed`	BOOLEAN	NOT NULL DEFAULT FALSE, -- 개인 정보 동의
+	`marketing_agreed` BOOLEAN NOT NULL DEFAULT FALSE -- 마케팅 수신 동의
 );
 
-CREATE TABLE `store` (
-	`store_number`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
-	`user_number`	BIGINT	NOT NULL	COMMENT 'AUTO_INCREMENT',
-	`store_name`	VARCHAR(255)	NOT NULL,
-	`store_logo`	VARCHAR(255)	NOT NULL	COMMENT 'url 받아옴',
-	`store_category` ENUM('치킨', '중식', '돈까스/회', '피자', '패스트푸드', '찜/탕', '족발/보쌈', '분식', '카페/디저트', '한식', '고기', '양식', '아시안', '야식', '도시락'),
-	`store_open_time`	TIME	NOT NULL,
-	`store_close_time`	TIME	NOT NULL,
-	`store_break_start`	TIME	NULL,
-	`store_break_end`	TIME	NULL,
-	`store_address`	VARCHAR(255)	NULL	,
-	`store_description`	TEXT	NULL,
-    FOREIGN KEY (USER_NUMBER) REFERENCES `USER` (USER_NUMBER)
-    
+-- 가게 정보 테이블
+CREATE TABLE `stores` (
+	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
+	`owner_id` BIGINT NOT NULL,
+	`store_name` VARCHAR(255) NOT NULL,
+	`logo_url`	VARCHAR(255) NOT NULL,
+	`category` ENUM('치킨', '중식', '돈까스/회', '피자', '패스트푸드', '찜/탕', '족발/보쌈', '분식', '카페/디저트', '한식', '고기', '양식', '아시안', '야식', '도시락'),
+	`opening_time` TIME	NOT NULL,
+	`closing_time` TIME NOT NULL,
+	`break_start_time` TIME,
+	`break_end_time` TIME,
+	`address` VARCHAR(255),
+	`description` TEXT,
+    FOREIGN KEY (owner_id) REFERENCES `users` (id) ON DELETE CASCADE
 );
 
-
-CREATE TABLE `MENU_Categories` (
-	`category_number`	BIGINT PRIMARY KEY AUTO_INCREMENT	,
-	`store_number`	BIGINT	NOT NULL	,
-	`category`	VARCHAR(255)	NOT NULL,
-    FOREIGN KEY (STORE_NUMBER) REFERENCES `STORE` (STORE_NUMBER)
+-- 메뉴별 카테고리 테이블 (인기 메뉴, 세트 메뉴, 사이드메뉴, 음료 ...)
+CREATE TABLE `menu_categories` (
+	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
+	`store_id` BIGINT NOT NULL,
+	`category` VARCHAR(255)	NOT NULL,
+    FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
 );
 
-CREATE TABLE `Orders` (
-	`order_number`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
-    `store_number`	BIGINT NOT NULL,
-	`order_address`	VARCHAR(255)	NOT NULL,
-	`order_total_price`	INT	NOT NULL,
-	`order_date`	DATETIME	NOT NULL,
-    `order_state`	INT		NOT NULL,
-    `order_count`	INT		NOT NULL,
-    FOREIGN KEY (STORE_NUMBER) REFERENCES `STORE` (STORE_NUMBER)
+-- 주문 정보 테이블
+CREATE TABLE `orders` (
+	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
+    `store_id` BIGINT NOT NULL,
+	`delivery_address` VARCHAR(255) NOT NULL,
+	`total_price` INT NOT NULL,
+	`order_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `order_state` ENUM('0', '1', '2') NOT NULL DEFAULT '0', -- 주문 상태 (0: 접수대기 / 1: 처리중 / 2: 주문완료) 
+    FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
 );
 
-CREATE TABLE `order_detail` (
-	`order_detail_number`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
-    `ORDER_NUMBER` BIGINT NOT NULL,
-    `menu_number` BIGINT NOT NULL,
-	`order_product_name`	VARCHAR(255)	NOT NULL,
-	`order_quantity`	INT	NOT NULL,
-    FOREIGN KEY (order_number) REFERENCES `ORDERS` (order_NUMBER)
-    
+-- 메뉴 정보 테이블
+CREATE TABLE `menus` (
+	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
+    `store_id` BIGINT NOT NULL,
+	`category_id` BIGINT	NOT NULL,
+	`menu_name`	VARCHAR(255) NOT NULL,
+	`image_url`	VARCHAR(255),
+	`menu_description` TEXT,
+    `menu_price` INT NOT NULL,
+    `is_available` BOOLEAN NOT NULL	DEFAULT TRUE,
+    FOREIGN KEY (category_id) REFERENCES `menu_categories` (id) ON DELETE CASCADE,
+    FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
 );
-CREATE TABLE `Menus` (
-	`menu_number`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
-    `STORE_NUMBER` BIGINT NOT NULL,
-    `ORDER_DETAIL_NUMBER` BIGINT NOT NULL,
-	`category_number`	BIGINT	NOT NULL,
-	`menu_name`	VARCHAR(255)	NOT NULL,
-	`menu_img`	VARCHAR(255)	NULL,
-	`menu_description`	TEXT	NULL,
-    `menu_price`	INT		NOT null,
-    `menu_state` TINYINT NOT NULL,
-    FOREIGN KEY (CATEGORY_NUMBER) REFERENCES `MENU_CATEGORIES` (CATEGORY_NUMBER),
-    FOREIGN KEY (STORE_NUMBER) REFERENCES `STORE` (STORE_NUMBER),
-    FOREIGN KEY (order_detail_number) REFERENCES `ORDER_DETAIL` (order_detail_number)
+
+-- 주문 목록 내 주문 1개 상세 정보 테이블
+CREATE TABLE `order_details` (
+	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
+    `order_id` BIGINT NOT NULL,
+    `menu_id` BIGINT NOT NULL,
+	`order_product_name` VARCHAR(255) NOT NULL,
+	`quantity` INT NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES `orders` (id) ON DELETE CASCADE,
+    FOREIGN KEY (menu_id) REFERENCES `menus` (id) ON DELETE CASCADE
 );
+
+-- 손님 정보 테이블
+CREATE TABLE `guests` (
+	`id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `order_id` BIGINT NOT NULL,
+    `nickname` VARCHAR(255) NOT NULL UNIQUE,
+	`profile_image` TEXT DEFAULT "/images/profile/default.png",
+    FOREIGN KEY (order_id) REFERENCES `orders` (id) ON DELETE CASCADE   
+);
+
+-- 리뷰 정보 테이블
 CREATE TABLE `reviews` (
-	`review_number`	BIGINT	PRIMARY KEY AUTO_INCREMENT,
-	`order_number`	BIGINT	NOT NULL,
-    `GUEST_NUMBER` BIGINT NOT NULL,
-	`review_rating`	INT	NULL,
-	`review_date`	DATE	NOT NULL,
-	`review_comments`	TEXT	NULL,
-	`review_report`	BOOLEAN	NOT NULL,
-    FOREIGN KEY (ORDER_NUMBER) REFERENCES `ORDERS` (ORDER_NUMBER)
-    
+	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
+	`order_id` BIGINT NOT NULL,
+    `guest_id` BIGINT NOT NULL,
+	`rating` INT, -- 별점
+	`review_date` DATE NOT NULL,
+	`review_content` TEXT,
+	`is_reported` BOOLEAN DEFAULT FALSE, -- 신고 기능
+    FOREIGN KEY (order_id) REFERENCES `orders` (id) ON DELETE CASCADE,
+    FOREIGN KEY (guest_id) REFERENCES `guests` (id) ON DELETE CASCADE
 );
 
-
-CREATE TABLE `GUEST` (
-	`GUEST_NUMBER` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    `ORDER_NUMBER` BIGINT NOT NULL,
-    `REVIEW_NUMBER` BIGINT NOT NULL,
-    `GUEST_NICKNAME` VARCHAR(255) UNIQUE,
-    `GUSET_IMG` VARCHAR(255),
-    
-    FOREIGN KEY (ORDER_NUMBER) REFERENCES `ORDERS` (ORDER_NUMBER),
-    FOREIGN KEY (REVIEW_NUMBER) REFERENCES `REVIEWS` (REVIEW_NUMBER)
-    
+-- 리뷰 사진 테이블
+CREATE TABLE `review_photos` (
+	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
+	`review_id` BIGINT	NOT NULL,
+	`photo_url`	VARCHAR(255),
+    FOREIGN KEY (review_id) REFERENCES `reviews` (id) ON DELETE CASCADE
 );
 
-
-
-CREATE TABLE `reviews_photos` (
-	`review_number` BIGINT	NOT NULL,
-	`review_photo`	VARCHAR(255)	NULL,
-    FOREIGN KEY (REVIEW_NUMBER) REFERENCES `REVIEWS` (REVIEW_NUMBER)
+-- 리뷰 이벤트 공지사항 정보 테이블
+CREATE TABLE `review_event_notices` (
+	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
+	`store_id` BIGINT,
+	`notice_photo_url` VARCHAR(255),
+    `notice_text`	TEXT,
+	FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
 );
 
-CREATE TABLE `REVIEW_EVENT_NOTICE` (
-	`STORE_NUMBER` BIGINT,
-	`REVIEW_NOTICE_PHOTO` VARCHAR(255) NULL,
-    `REVIEW_NOTICE_TEXT`	TEXT	NULL,
-	FOREIGN KEY (STORE_NUMBER) REFERENCES `STORE` (STORE_NUMBER)
+-- 작성된 리뷰에 대한 답글 테이블
+CREATE TABLE `review_comments` (
+	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
+	`review_id` BIGINT NOT NULL,
+	`comment` TEXT NOT NULL,
+    `comment_date` DATE NOT NULL,
+    FOREIGN KEY (review_id) REFERENCES `reviews` (id) ON DELETE CASCADE
 );
-
-CREATE TABLE `REVIEW_COMMENT` (
-	`REVIEW_NUMBER` BIGINT NOT NULL,
-	`COMMENT` VARCHAR(255),
-    `REVIEW_COMMENT_DATE` DATE NOT NULL,
-    FOREIGN KEY (REVIEW_NUMBER) REFERENCES `REVIEWS` (REVIEW_NUMBER)
-);
-
-
-
-# CREATE TABLE `period` (
-# 	`period_number`	INT	PRIMARY KEY AUTO_INCREMENT,
-# 	`daily_date`	DATE	NULL,
-# 	`daily_sales`	INT	NULL
-# );
-
-# CREATE TABLE `period1` (
-# 	`period_number`	INT	PRIMARY KEY AUTO_INCREMENT,
-# 	`period_number2`	INT	NOT NULL,
-# 	`month_sales`	DATE	NULL,
-# 	`month_date`	DATE	NULL
-# );
-
-
