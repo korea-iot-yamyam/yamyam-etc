@@ -10,7 +10,7 @@ CREATE TABLE `users` (
 	`user_name`	VARCHAR(255) NOT NULL,
 	`user_email` VARCHAR(255) NOT NULL UNIQUE,
     `user_phone` VARCHAR(30) NOT NULL,
-	`user_business_number` INT NOT NULL UNIQUE,
+	`user_business_number` VARCHAR(20) NOT NULL UNIQUE,
 	`privacy_policy_agreed`	BOOLEAN	NOT NULL DEFAULT FALSE, -- 개인 정보 동의
 	`marketing_agreed` BOOLEAN NOT NULL DEFAULT FALSE -- 마케팅 수신 동의
 );
