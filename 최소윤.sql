@@ -22,11 +22,10 @@ SELECT r.rating, COUNT(r.id) AS reviewCount
             GROUP BY r.rating;
 
 # 월별 별점 평균
-select DATE_FORMAT(r.review_date, '%Y-%m') as review_month,
+select MONTH(r.review_date) as review_month,
 	ROUND(avg(r.rating)) avg_rating
 from reviews r JOIN orders o ON r.order_id = o.id 
 WHERE 
 		o.store_id IN (1, 2)
-		AND TIMESTAMPDIFF(MONTH, DATE_SUB(SYSDATE(), INTERVAL 6 MONTH), r.review_date) <= 6
-        AND r.review_date >= DATE_SUB(SYSDATE(), INTERVAL 6 MONTH)        
-GROUP BY review_month;
+		AND MONTH(r.review_date) between 5 and 11
+GROUP BY MONTH(r.review_date)
