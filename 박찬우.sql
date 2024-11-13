@@ -131,11 +131,6 @@ VALUES
     (49, 49, 'Quesadilla', 3),
     (50, 50, 'Miso Soup', 1);
 
--- SELECT a.order_product_name,
---        SUM(a.quantity) AS total_quantity_sold        -- 판매된 총 수량 계산
--- FROM order_details as a
--- JOIN order_details ON orders.id = order_details.order_id          -- 주문디테일테이블에서 주문테이블.id = 주문디테일테이블.order_i
--- WHERE orders.store_id = 1 AND DATE(orders.order_date) = CURDATE() -- 특정 가게에서 오늘 주문된 항목 필터링
 
 -- 주간
 SELECT a.order_product_name,                          -- 판매된 메뉴 이름
@@ -162,4 +157,128 @@ FROM order_details AS a                               -- 오더 디테일 테이
 WHERE  YEAR(b.order_date) = 2024 AND MONTH(b.order_date) = 11 -- 변수로 받을 예정
 GROUP BY a.order_product_name;                        -- 오더디테일
 
+
+-- 손님 정보 테이블
+CREATE TABLE `guests` (
+	`id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    `order_id` BIGINT NOT NULL,
+    `nickname` VARCHAR(255) NOT NULL UNIQUE,
+	`profile_image` VARCHAR(255) DEFAULT "/images/profile/default.png",
+    FOREIGN KEY (order_id) REFERENCES `orders` (id) ON DELETE CASCADE   
+);
+
+-- 리뷰 정보 테이블
+CREATE TABLE `reviews` (
+	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
+	`order_id` BIGINT NOT NULL,
+    `guest_id` BIGINT NOT NULL,
+	`rating` INT, -- 별점
+	`review_date` DATE NOT NULL,
+	`review_content` TEXT,
+	`is_reported` BOOLEAN DEFAULT FALSE, -- 신고 기능
+    FOREIGN KEY (order_id) REFERENCES `orders` (id) ON DELETE CASCADE,
+    FOREIGN KEY (guest_id) REFERENCES `guests` (id) ON DELETE CASCADE
+);
+
+-- 리뷰 사진 테이블
+CREATE TABLE `review_photos` (
+	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
+	`review_id` BIGINT	NOT NULL,
+	`photo_url`	VARCHAR(255),
+    FOREIGN KEY (review_id) REFERENCES `reviews` (id) ON DELETE CASCADE
+);
+
+-- 작성된 리뷰에 대한 답글 테이블
+CREATE TABLE `review_comments` (
+	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
+	`review_id` BIGINT NOT NULL,
+	`comment` TEXT NOT NULL,
+    `comment_date` DATE NOT NULL,
+    FOREIGN KEY (review_id) REFERENCES `reviews` (id) ON DELETE CASCADE
+);
+
+-- 손님 정보 테이블 데이터
+INSERT INTO `guests` (`order_id`, `nickname`, `profile_image`)
+VALUES 
+(1, 'GuestUser1', '/images/profile/guest1.png'),
+(2, 'GuestUser2', '/images/profile/guest2.png'),
+(3, 'GuestUser3', '/images/profile/guest3.png'),
+(4, 'GuestUser4', '/images/profile/guest4.png');
+
+-- 리뷰 정보 테이블 데이터
+INSERT INTO `reviews` (`order_id`, `guest_id`, `rating`, `review_date`, `review_content`, `is_reported`)
+VALUES 
+(1, 1, 5, '2023-11-01', 'Great experience, loved the product!', FALSE),
+(2, 2, 4, '2023-11-05', 'Good service, could be improved.', FALSE),
+(3, 3, 3, '2023-11-10', 'Average experience, expected better.', TRUE),
+(4, 4, 2, '2023-11-15', 'Not satisfied, had issues with delivery.', FALSE),
+(5, 4, 2, '2023-11-15', 'Not satisfied, had issues with delivery.', FALSE);
+
+-- 리뷰 사진 테이블 데이터
+INSERT INTO `review_photos` (`review_id`, `photo_url`)
+VALUES 
+(1, '/images/reviews/photo1.png'),
+(1, '/images/reviews/photo2.png'),
+(2, '/images/reviews/photo3.png'),
+(3, '/images/reviews/photo4.png'),
+(4, '/images/reviews/photo5.png');
+
+-- 리뷰 답글 테이블 데이터
+INSERT INTO `review_comments` (`review_id`, `comment`, `comment_date`)
+VALUES 
+(1, 'Thank you for the feedback!', '2023-11-02'),
+(2, 'We appreciate your input and will work on it!', '2023-11-06'),
+(3, 'Sorry to hear about your experience, we will improve.', '2023-11-11'),
+(4, 'We apologize for the inconvenience caused.', '2023-11-16'),
+(5, 'We apologize for the inconvenience caused111.', '2023-11-16');
+
+
+-- 리뷰 전체 조회
+SELECT 
+    r.id AS review_id,
+    g.profile_image,
+    g.nickname,
+    r.rating,
+    DATE_FORMAT(r.review_date, '%Y-%m-%d %H:%i:%s') AS review_date,
+    r.review_content,
+    r.is_reported,
+    GROUP_CONCAT(rp.photo_url) AS photo_url,
+    rc.comment AS comments,
+    DATE_FORMAT(rc.comment_date, '%Y-%m-%d %H:%i:%s') AS comment_date
+FROM 
+    reviews r
+JOIN 
+    guests g ON r.guest_id = g.id
+LEFT JOIN 
+    review_photos rp ON r.id = rp.review_id
+LEFT JOIN 
+    review_comments rc ON r.id = rc.review_id
+GROUP BY 
+    r.id, g.profile_image, g.nickname, r.rating, r.review_date, r.review_content, r.is_reported, rc.comment, rc.comment_date;
+
+-- 미답변 리뷰 조회
+SELECT 
+    r.id AS review_id,
+    g.profile_image,
+    g.nickname,
+    r.rating,
+    DATE_FORMAT(r.review_date, '%Y-%m-%d %H:%i:%s') AS review_date,
+    r.review_content,
+    r.is_reported,
+    GROUP_CONCAT(rp.photo_url) AS photo_url,
+    rc.comment AS comments,
+    DATE_FORMAT(rc.comment_date, '%Y-%m-%d %H:%i:%s') AS comment_date
+FROM 
+    reviews r
+JOIN 
+    guests g ON r.guest_id = g.id
+LEFT JOIN 
+    review_photos rp ON r.id = rp.review_id
+LEFT JOIN 
+    review_comments rc ON r.id = rc.review_id
+WHERE 
+    rc.comment IS NULL
+GROUP BY 
+    r.id, g.profile_image, g.nickname, r.rating, r.review_date, r.review_content, r.is_reported, rc.comment, rc.comment_date;
+    
 
