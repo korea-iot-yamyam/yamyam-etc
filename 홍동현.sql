@@ -11,6 +11,24 @@ CREATE TABLE `orders` (
     `order_state` ENUM('0', '1', '2') NOT NULL DEFAULT '0'
 );
 
+CREATE TABLE `menu_categories` (
+	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
+	`store_id` BIGINT NOT NULL,
+	`menu_category` VARCHAR(255)	NOT NULL
+);
+
+CREATE TABLE `menus` (
+	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
+    `store_id` BIGINT NOT NULL,
+	`category_id` BIGINT	NOT NULL,
+	`menu_name`	VARCHAR(255) NOT NULL,
+	`image_url`	VARCHAR(255) DEFAULT "/images/profile/default1.png",
+	`menu_description` TEXT,
+    `menu_price` INT NOT NULL,
+    `is_available` BOOLEAN NOT NULL	DEFAULT TRUE,
+    FOREIGN KEY (category_id) REFERENCES `menu_categories` (id) ON DELETE CASCADE
+);
+
 -- 예시 입력값
 INSERT INTO `orders` (store_id, delivery_address, total_price, order_date, order_state)
 VALUES
@@ -88,3 +106,8 @@ FROM orders
 where Year(order_date) = 2024	-- 특정 연도를 지정할 경우
 GROUP BY YEAR(order_date)
 ORDER BY 연도;
+
+-- 메뉴 전체 조회
+select a.menu_name, a.image_url, a.menu_description, a.menu_price, a.is_available, b.menu_category
+from menus as a 
+join menu_categories as b on a.category_id = b.id;
