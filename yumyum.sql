@@ -35,7 +35,7 @@ CREATE TABLE `stores` (
 CREATE TABLE `menu_categories` (
 	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
 	`store_id` BIGINT NOT NULL,
-	`category` VARCHAR(255)	NOT NULL,
+	`menu_category` VARCHAR(255)	NOT NULL,
     FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
 );
 
