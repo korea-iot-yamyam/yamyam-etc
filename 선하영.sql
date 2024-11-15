@@ -67,13 +67,12 @@ VALUES
     (50, '서울시 마포구 상암로 123', 29000, '2024-12-20 15:55:10', '1');
     
 SELECT 
-    DATE(order_date) AS 날짜,
-    HOUR(order_date) AS 시간대,
-    SUM(total_price) AS 매출
-FROM orders
-WHERE YEAR(order_date) = 2024 AND MONTH(order_date) = 11 AND DAY(order_date) = 1
-GROUP BY DATE(order_date), HOUR(order_date)
-ORDER BY 날짜, 시간대;
-
+    DATE(o.order_date) AS date,
+    HOUR(o.order_date) AS hour,
+    SUM(o.total_price) AS revenue
+FROM orders AS o
+WHERE YEAR(o.order_date) = 2024 AND MONTH(o.order_date) = 11 AND DAY(o.order_date) = 1
+GROUP BY DATE(o.order_date), HOUR(o.order_date)
+ORDER BY date, hour;
 
 
