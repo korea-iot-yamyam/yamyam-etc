@@ -2,6 +2,42 @@ DROP DATABASE IF EXISTS `YAMYAM`;
 CREATE DATABASE `YAMYAM`;
 USE `YAMYAM`;
 
+-- 회원 정보 테이블
+CREATE TABLE `users` (
+	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
+	`user_id` VARCHAR(255) NOT NULL UNIQUE,
+	`user_pw` VARCHAR(255) NOT NULL,
+	`user_name`	VARCHAR(255) NOT NULL,
+	`user_email` VARCHAR(255) NOT NULL,
+    `user_phone` VARCHAR(30) NOT NULL,
+	`user_business_number` VARCHAR(20) NOT NULL UNIQUE,
+	`privacy_policy_agreed`	BOOLEAN	NOT NULL DEFAULT FALSE, -- 개인 정보 동의
+	`marketing_agreed` BOOLEAN NOT NULL DEFAULT FALSE -- 마케팅 수신 동의
+);
+
+-- 가게 정보 테이블
+CREATE TABLE `stores` (
+	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
+	`owner_id` BIGINT NOT NULL,
+	`store_name` VARCHAR(255) NOT NULL,
+	`logo_url`	VARCHAR(255) NOT NULL DEFAULT "/images/profile/default2.png",
+	`category` ENUM('치킨', '중식', '돈까스/회', '피자', '패스트푸드', '찜/탕', '족발/보쌈', '분식', '카페/디저트', '한식', '고기', '양식', '아시안', '야식', '도시락') NOT NULL,
+	`opening_time` TIME	NOT NULL,
+	`closing_time` TIME NOT NULL,
+	`break_start_time` TIME,
+	`break_end_time` TIME,
+	`address` VARCHAR(255),
+	`description` TEXT,
+    FOREIGN KEY (owner_id) REFERENCES `users` (id) ON DELETE CASCADE
+);
+
+-- 메뉴별 카테고리 테이블 (인기 메뉴, 세트 메뉴, 사이드메뉴, 음료 ...)
+CREATE TABLE `menu_categories` (
+	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
+	`store_id` BIGINT NOT NULL,
+	`menu_category` VARCHAR(255)	NOT NULL,
+    FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
+);
 -- 주문 정보 테이블
 CREATE TABLE `orders` (
 	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
@@ -131,16 +167,6 @@ VALUES
     (49, 49, 'Quesadilla', 3),
     (50, 50, 'Miso Soup', 1);
 
-
--- 주간
-SELECT a.order_product_name,                          -- 판매된 메뉴 이름
-       SUM(a.quantity) AS total_quantity_sold         -- 판매된 메뉴의 갯수 합 sum
-FROM order_details AS a                               -- 오더 디테일 테이블
-	JOIN orders as b ON a.order_id = b.id                 -- 오더스 디테일.order_id 와 오더스.id 와 같은것 조인
-WHERE b.order_date BETWEEN '2024-12-05' AND '2024-12-07'
-GROUP BY a.order_product_name;                        -- 오더디테일
-
-
 -- 일간
 SELECT a.order_product_name,                          -- 판매된 메뉴 이름
        SUM(a.quantity) AS total_quantity_sold         -- 판매된 메뉴의 갯수 합 sum
@@ -149,13 +175,21 @@ FROM order_details AS a                               -- 오더 디테일 테이
 WHERE  YEAR(b.order_date) = 2024 AND MONTH(b.order_date) = 11 AND DAY(b.order_date) = 22
 GROUP BY a.order_product_name;                        -- 오더디테일
 
+-- 주간
+-- SELECT a.order_product_name,                          -- 판매된 메뉴 이름
+--        SUM(a.quantity) AS total_quantity_sold         -- 판매된 메뉴의 갯수 합 sum
+-- FROM order_details AS a                               -- 오더 디테일 테이블
+-- 	JOIN orders as b ON a.order_id = b.id                 -- 오더스 디테일.order_id 와 오더스.id 와 같은것 조인
+-- WHERE b.order_date BETWEEN '2024-12-05' AND '2024-12-07'
+-- GROUP BY a.order_product_name;                        -- 오더디테일
+
 -- 월간
-SELECT a.order_product_name,                          -- 판매된 메뉴 이름
-       SUM(a.quantity) AS total_quantity_sold         -- 판매된 메뉴의 갯수 합 sum
-FROM order_details AS a                               -- 오더 디테일 테이블
-	JOIN orders as b ON a.order_id = b.id             -- 
-WHERE  YEAR(b.order_date) = 2024 AND MONTH(b.order_date) = 11 -- 변수로 받을 예정
-GROUP BY a.order_product_name;                        -- 오더디테일
+-- SELECT a.order_product_name,                          -- 판매된 메뉴 이름
+--        SUM(a.quantity) AS total_quantity_sold         -- 판매된 메뉴의 갯수 합 sum
+-- FROM order_details AS a                               -- 오더 디테일 테이블
+-- 	JOIN orders as b ON a.order_id = b.id             -- 
+-- WHERE  YEAR(b.order_date) = 2024 AND MONTH(b.order_date) = 11 -- 변수로 받을 예정
+-- GROUP BY a.order_product_name;                        -- 오더디테일
 
 
 -- 손님 정보 테이블
@@ -281,4 +315,5 @@ WHERE
 GROUP BY 
     r.id, g.profile_image, g.nickname, r.rating, r.review_date, r.review_content, r.is_reported, rc.comment, rc.comment_date;
     
+select * from users;
 
