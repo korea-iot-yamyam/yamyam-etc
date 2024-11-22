@@ -42,26 +42,26 @@ CREATE TABLE `orders` (
     FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
 );
 
+-- 메뉴별 카테고리 테이블 (인기 메뉴, 세트 메뉴, 사이드메뉴, 음료 ...)
+CREATE TABLE `menu_categories` (
+	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
+	`store_id` BIGINT NOT NULL,
+	`menu_category` VARCHAR(255)	NOT NULL,
+    FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
+);
+
 -- 메뉴 정보 테이블
 CREATE TABLE `menus` (
 	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
     `store_id` BIGINT NOT NULL,
+    `category_id` BIGINT NOT NULL,
 	`menu_name`	VARCHAR(255) NOT NULL,
 	`image_url`	VARCHAR(255) DEFAULT "/images/profile/default1.png",
 	`menu_description` TEXT,
     `menu_price` INT NOT NULL,
     `is_available` BOOLEAN NOT NULL	DEFAULT TRUE,
-    FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
-);
-
--- 메뉴별 카테고리 테이블 (인기 메뉴, 세트 메뉴, 사이드메뉴, 음료 ...)
-CREATE TABLE `menu_categories` (
-	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
-	`store_id` BIGINT NOT NULL,
-    `menu_id` BIGINT	NOT NULL,
-	`menu_category` VARCHAR(255)	NOT NULL,
     FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE,
-    FOREIGN KEY (menu_id) REFERENCES `menus` (id) ON DELETE CASCADE
+    FOREIGN KEY (category_id) REFERENCES `menu_categories` (id) ON DELETE CASCADE
 );
 
 -- 메뉴 옵션(사이즈, 추가 토핑 등)
