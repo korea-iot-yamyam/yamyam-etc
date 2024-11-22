@@ -8,7 +8,7 @@ CREATE TABLE `users` (
 	`user_id` VARCHAR(255) NOT NULL UNIQUE,
 	`user_pw` VARCHAR(255) NOT NULL,
 	`user_name`	VARCHAR(255) NOT NULL,
-	`user_email` VARCHAR(255) NOT NULL UNIQUE,
+	`user_email` VARCHAR(255) NOT NULL,
     `user_phone` VARCHAR(30) NOT NULL,
 	`user_business_number` VARCHAR(20) NOT NULL UNIQUE,
 	`privacy_policy_agreed`	BOOLEAN	NOT NULL DEFAULT FALSE, -- 개인 정보 동의
@@ -31,14 +31,6 @@ CREATE TABLE `stores` (
     FOREIGN KEY (owner_id) REFERENCES `users` (id) ON DELETE CASCADE
 );
 
--- 메뉴별 카테고리 테이블 (인기 메뉴, 세트 메뉴, 사이드메뉴, 음료 ...)
-CREATE TABLE `menu_categories` (
-	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
-	`store_id` BIGINT NOT NULL,
-	`menu_category` VARCHAR(255)	NOT NULL,
-    FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
-);
-
 -- 주문 정보 테이블
 CREATE TABLE `orders` (
 	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
@@ -54,14 +46,30 @@ CREATE TABLE `orders` (
 CREATE TABLE `menus` (
 	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
     `store_id` BIGINT NOT NULL,
-	`category_id` BIGINT	NOT NULL,
 	`menu_name`	VARCHAR(255) NOT NULL,
 	`image_url`	VARCHAR(255) DEFAULT "/images/profile/default1.png",
 	`menu_description` TEXT,
     `menu_price` INT NOT NULL,
     `is_available` BOOLEAN NOT NULL	DEFAULT TRUE,
-    FOREIGN KEY (category_id) REFERENCES `menu_categories` (id) ON DELETE CASCADE,
     FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
+);
+
+-- 메뉴별 카테고리 테이블 (인기 메뉴, 세트 메뉴, 사이드메뉴, 음료 ...)
+CREATE TABLE `menu_categories` (
+	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
+	`store_id` BIGINT NOT NULL,
+    `menu_id` BIGINT	NOT NULL,
+	`menu_category` VARCHAR(255)	NOT NULL,
+    FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE,
+    FOREIGN KEY (menu_id) REFERENCES `menus` (id) ON DELETE CASCADE
+);
+
+-- 메뉴 옵션(사이즈, 추가 토핑 등)
+CREATE TABLE `menu_options`(
+	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
+    `menu_id` BIGINT NOT NULL,
+    `option_name` VARCHAR(255) NOT NULL,
+    FOREIGN KEY (menu_id) REFERENCES `menus` (id) ON DELETE CASCADE
 );
 
 -- 주문 목록 내 주문 1개 상세 정보 테이블
@@ -73,6 +81,17 @@ CREATE TABLE `order_details` (
 	`quantity` INT NOT NULL,
     FOREIGN KEY (order_id) REFERENCES `orders` (id) ON DELETE CASCADE,
     FOREIGN KEY (menu_id) REFERENCES `menus` (id) ON DELETE CASCADE
+);
+
+-- 메뉴 옵션의 세부사항(S, M, L ... 등)
+CREATE TABLE `menu_option_details`(
+	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
+    `option_id` BIGINT NOT NULL, -- 메뉴 옵션 테이블 id
+    `order_detail_id` BIGINT NOT NULL,
+    `option_detail_name` VARCHAR(255) NOT NULL,
+    `additional_fee` VARCHAR(255) NOT NULL DEFAULT "0",
+    FOREIGN KEY (option_id) REFERENCES `menu_options` (id) ON DELETE CASCADE,
+    FOREIGN KEY (order_detail_id) REFERENCES `order_details` (id) ON DELETE CASCADE
 );
 
 -- 손님 정보 테이블
