@@ -21,7 +21,7 @@ CREATE TABLE `stores` (
 	`owner_id` BIGINT NOT NULL,
 	`store_name` VARCHAR(255) NOT NULL,
 	`logo_url`	VARCHAR(255) NOT NULL DEFAULT "/images/profile/default2.png",
-	`category` ENUM('치킨', '중식', '돈까스/회', '피자', '패스트푸드', '찜/탕', '족발/보쌈', '분식', '카페/디저트', '한식', '고기', '양식', '아시안', '야식', '도시락') NOT NULL,
+	`category` ENUM('치킨', '중식', '돈까스_회', '피자', '패스트푸드', '찜_탕', '족발_보쌈', '분식', '카페_디저트', '한식', '고기', '양식', '아시안', '야식', '도시락') NOT NULL,
 	`opening_time` TIME	NOT NULL,
 	`closing_time` TIME NOT NULL,
 	`break_start_time` TIME,
