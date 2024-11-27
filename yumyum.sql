@@ -45,9 +45,7 @@ CREATE TABLE `orders` (
 -- 메뉴별 카테고리 테이블 (인기 메뉴, 세트 메뉴, 사이드메뉴, 음료 ...)
 CREATE TABLE `menu_categories` (
 	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
-	`store_id` BIGINT NOT NULL,
-	`menu_category` VARCHAR(255)	NOT NULL,
-    FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
+	`menu_category` VARCHAR(255)	NOT NULL
 );
 
 -- 메뉴 정보 테이블
@@ -77,7 +75,6 @@ CREATE TABLE `order_details` (
 	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
     `order_id` BIGINT NOT NULL,
     `menu_id` BIGINT NOT NULL,
-	`order_product_name` VARCHAR(255) NOT NULL,
 	`quantity` INT NOT NULL,
     FOREIGN KEY (order_id) REFERENCES `orders` (id) ON DELETE CASCADE,
     FOREIGN KEY (menu_id) REFERENCES `menus` (id) ON DELETE CASCADE
@@ -89,7 +86,7 @@ CREATE TABLE `menu_option_details`(
     `option_id` BIGINT NOT NULL, -- 메뉴 옵션 테이블 id
     `order_detail_id` BIGINT NOT NULL,
     `option_detail_name` VARCHAR(255) NOT NULL,
-    `additional_fee` VARCHAR(255) NOT NULL DEFAULT "0",
+    `additional_fee` INT NOT NULL DEFAULT 0,
     FOREIGN KEY (option_id) REFERENCES `menu_options` (id) ON DELETE CASCADE,
     FOREIGN KEY (order_detail_id) REFERENCES `order_details` (id) ON DELETE CASCADE
 );
