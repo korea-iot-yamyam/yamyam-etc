@@ -72,6 +72,8 @@ VALUES
 
 
 -- 가게 정보 테이블
+-- stores.owner_id => users_id.id ( end )
+-- 가게의 오너 => 사장님 가입 id
 CREATE TABLE `stores` (
 	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
 	`owner_id` BIGINT NOT NULL,
@@ -87,10 +89,11 @@ CREATE TABLE `stores` (
     FOREIGN KEY (owner_id) REFERENCES `users` (id) ON DELETE CASCADE
 );
 
--- stores.owner_id => users_id.id ( 엔드 )
+-- stores.owner_id => users_id.id ( end )
+-- 가게의 오너 => 사장님 가입 id
 INSERT INTO `stores` (
 					  `id`,           -- 가게 고유 id
-					  `owner_id`,	  -- 사장님 고유 id ( 가게 정보에는 반드시 한명의 사장님이 등록되어야 한다. stores.owner_id = users_id.id 동일한 값을 참조한다.
+					  `owner_id`,	  -- 사장 고유 id ( 가게 정보에는 반드시 한명의 사장님이 등록되어야 한다. stores.owner_id = users_id.id 동일한 값을 참조한다. )
 					  `store_name`,   -- 가게 이름
                       `logo_url`,     -- 가게 로고
                       `category`,     -- 가게 카테고리 ( ENUM('치킨', '중식', '돈까스_회', '피자', '패스트푸드', '찜_탕', '족발_보쌈', '분식', '카페_디저트', '한식', '고기', '양식', '아시안', '야식', '도시락') NOT NULL )
@@ -102,7 +105,7 @@ INSERT INTO `stores` (
 VALUES
 (1, 1, '치킨집1', '/images/profile/default2.png', '치킨', '10:00:00', '22:00:00', '서울시 강남구', '맛있는 치킨 전문점1'),
 (2, 2, '피자집1', '/images/profile/default2.png', '피자', '11:00:00', '23:00:00', '서울시 서초구', '신선한 피자 전문점1'),
-(3, 3, '중식당1', '/images/profile/default2.png', '중식', '09:00:00', '21:00:00', '서울시 송파구', '정통 중식 요리 전문점1'),
+(3, 3, '중식당', '/images/profile/default2.png', '중식', '09:00:00', '21:00:00', '부산시 다대로339', '정통 중식 요리 전문점'),
 (4, 4, '버거샵1', '/images/profile/default2.png', '패스트푸드', '10:00:00', '22:00:00', '서울시 마포구', '빠르고 맛있는 버거1'),
 (5, 5, '타코집1', '/images/profile/default2.png', '아시안', '11:00:00', '23:00:00', '서울시 강서구', '정통 멕시칸 타코1'),
 (6, 6, '파스타하우스1', '/images/profile/default2.png', '양식', '10:00:00', '22:00:00', '서울시 관악구', '다양한 파스타 메뉴1'),
@@ -153,6 +156,8 @@ VALUES
 
 
 -- 주문 정보 테이블
+-- order.id => store_id 
+-- 주문 정보는 어디 가게에서 팔렸는지 주문 정보를 확인 가능
 CREATE TABLE `orders` (
 	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
     `store_id` BIGINT NOT NULL,
@@ -163,22 +168,18 @@ CREATE TABLE `orders` (
     FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
 );
 
-
--- 주문 목록 내 주문 1개 상세 정보 테이블
-CREATE TABLE `order_details` (
-	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
-    `order_id` BIGINT NOT NULL,
-    `menu_id` BIGINT NOT NULL,
-	`order_product_name` VARCHAR(255) NOT NULL,
-	`quantity` INT NOT NULL,
-    FOREIGN KEY (order_id) REFERENCES `orders` (id) ON DELETE CASCADE
-);
-
-
 -- 주문 정보 50개 삽입
-INSERT INTO `orders` (`id`, `store_id`, `delivery_address`, `total_price`, `order_date`, `order_state`)
+-- order.id => store_id 
+INSERT INTO `orders` (
+                       `id`,                -- 주문 고유 id
+					   `store_id`,          -- 가게 고유 id ( 주문 정보는 반드시 어디서 팔렸는지 가게 정보가 포함되어야 한다. )
+					   `delivery_address`,  -- 배달 주소
+                       `total_price`,       -- 주문 가격 합
+                       `order_date`, 
+                       `order_state`
+                       )
 VALUES 
-(1, 1, '서울시 강남구 테헤란로 123', 25000, '2023-11-01 12:34:56', '2'),
+(1, 1, '부산시 사하구 다대로339 219호', 25000, '2023-11-01 12:34:56', '2'),
 (2, 2, '서울시 서초구 반포대로 456', 30000, '2024-11-02 13:45:56', '2'),
 (3, 3, '서울시 송파구 올림픽로 789', 20000, '2024-11-03 14:56:56', '2'),
 (4, 4, '서울시 마포구 양화로 987', 15000, '2024-11-04 15:10:30', '2'),
@@ -190,7 +191,7 @@ VALUES
 (10, 10, '서울시 서대문구 통일로 987', 34000, '2024-11-10 13:35:25', '2'),
 (11, 1, '서울시 성북구 보문로 123', 22000, '2024-11-11 14:45:35', '2'),
 (12, 2, '서울시 강동구 고덕로 456', 26000, '2024-11-12 15:55:45', '2'),
-(13, 3, '서울시 종로구 세종대로 654', 30000, '2024-11-13 16:20:30', '2'),
+(13, 3, '서울시 어쩌고', 50000, '2024-11-13 16:20:30', '2'),
 (14, 4, '서울시 중구 퇴계로 789', 21000, '2024-11-14 17:25:10', '0'),
 (15, 5, '서울시 용산구 녹사평대로 987', 28000, '2024-11-15 18:30:50', '2'),
 (16, 6, '서울시 광진구 광나루로 123', 25000, '2024-11-16 19:35:20', '2'),
@@ -227,10 +228,22 @@ VALUES
 (47, 7, '서울시 동작구 흑석로 789', 21000, '2024-12-17 12:25:30', '1'),
 (48, 8, '서울시 강동구 천호대로 654', 27000, '2024-12-18 13:35:40', '2'),
 (49, 9, '서울시 중구 동호로 987', 25000, '2024-12-19 14:45:50', '0'),
-(50, 10, '서울시 마포구 상암로 123', 29000, '2024-12-20 15:55:10', '1'),
-(51, 10, '서울시 마포구 상암로 123', 29000, '2024-12-20 15:55:10', '1'),
-(52, 10, '서울시 마포구 상암로 123', 29000, '2024-12-20 15:55:10', '1'),
-(53, 10, '서울시 마포구 상암로 123', 29000, '2024-12-20 15:55:10', '1');
+(50, 3, '부산시 다대로 현대 아파트 100호', 29000, '2024-11-13 15:55:10', '2'),
+(51, 3, '부산시 다대로 동원로얄 200호', 24000, '2024-11-13 17:20:30', '2'),
+(52, 3, '부산시 다대로 협성 300호', 52300, '2024-11-13 18:20:30', '2'),
+(53, 3, '부산시 다대로 339 300호', 35000, '2024-11-13 20:21:30', '2');
+
+
+-- 주문 목록 내 주문 1개 상세 정보 테이블
+CREATE TABLE `order_details` (
+	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
+    `order_id` BIGINT NOT NULL,
+    `menu_id` BIGINT NOT NULL,
+	`order_product_name` VARCHAR(255) NOT NULL,
+	`quantity` INT NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES `orders` (id) ON DELETE CASCADE
+);
+
 
 -- 주문 상세 정보 50개 삽입
 INSERT INTO `order_details` (`id`, `order_id`, `menu_id`, `order_product_name`, `quantity`)
@@ -284,7 +297,11 @@ VALUES
 (47, 47, 47, '해산물 파에야', 4),
 (48, 48, 48, '부리또', 2),
 (49, 49, 49, '퀘사디아', 3),
-(50, 50, 50, '미소된장국', 1);
+(50, 50, 50, '미소된장국', 1),
+(51, 51, 50, '짱뽕', 1),
+(52, 52, 50, '탕수육', 1),
+(53, 53, 50, '짬짜면', 1);
+
 
 
 
