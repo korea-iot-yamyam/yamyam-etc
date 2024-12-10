@@ -76,7 +76,7 @@ CREATE TABLE `orders` (
     `store_id` BIGINT NOT NULL,
 	`delivery_address` VARCHAR(255) NOT NULL,
 	`order_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `order_state` ENUM('0', '1', 'orders2') NOT NULL DEFAULT '0', -- 주문 상태 (0: 접수대기 / 1: 처리중 / 2: 주문완료) 
+    `order_state` ENUM('0', '1', '2') NOT NULL DEFAULT '0', -- 주문 상태 (0: 접수대기 / 1: 처리중 / 2: 주문완료) 
     FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
 );
 
@@ -86,7 +86,6 @@ CREATE TABLE `order_details` (
 	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
     `order_id` BIGINT NOT NULL,
     `menu_id` BIGINT NOT NULL,
-	`guest_name` VARCHAR(255) NOT NULL,
     FOREIGN KEY (order_id) REFERENCES `orders` (id) ON DELETE CASCADE,
     FOREIGN KEY (menu_id) REFERENCES `menus` (id) ON DELETE CASCADE
 );
@@ -96,10 +95,9 @@ CREATE TABLE `order_details` (
 CREATE TABLE `menu_option_details`(
 	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
     `menu_option_id` BIGINT NOT NULL, -- 메뉴 옵션 테이블 id
-    `order_detail_id` BIGINT NOT NULL,
+    `order_detail_name` BIGINT NOT NULL,
     `additional_fee` INT NOT NULL DEFAULT 0,
-    FOREIGN KEY (menu_option_id) REFERENCES `menu_options` (id) ON DELETE CASCADE,
-    FOREIGN KEY (order_detail_id) REFERENCES `order_details` (id) ON DELETE CASCADE
+    FOREIGN KEY (menu_option_id) REFERENCES `menu_options` (id) ON DELETE CASCADE
 );
 
 
