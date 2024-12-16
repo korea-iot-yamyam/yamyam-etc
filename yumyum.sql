@@ -15,6 +15,7 @@ CREATE TABLE `users` (
 	`marketing_agreed` BOOLEAN NOT NULL DEFAULT FALSE -- 마케팅 수신 동의
 );
 
+
 -- 가게 정보 테이블
 CREATE TABLE `stores` (
 	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
@@ -22,31 +23,22 @@ CREATE TABLE `stores` (
 	`store_name` VARCHAR(255) NOT NULL,
 	`logo_url`	VARCHAR(255) NOT NULL DEFAULT '/images/profile/default2.png',
 	`category` ENUM('치킨', '중식', '돈까스_회', '피자', '패스트푸드', '찜_탕', '족발_보쌈', '분식', '카페_디저트', '한식', '고기', '양식', '아시안', '야식', '도시락') NOT NULL,
-	`opening_time` TIME	NOT NULL,
-	`closing_time` TIME NOT NULL,
-	`break_start_time` TIME,
-	`break_end_time` TIME,
+	`opening_time` DATETIME	NOT NULL,
+	`closing_time` DATETIME NOT NULL,
+	`break_start_time` DATETIME,
+	`break_end_time` DATETIME,
 	`address` VARCHAR(255),
 	`description` TEXT,
     FOREIGN KEY (owner_id) REFERENCES `users` (id) ON DELETE CASCADE
 );
 
--- 주문 정보 테이블
-CREATE TABLE `orders` (
-	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
-    `store_id` BIGINT NOT NULL,
-	`delivery_address` VARCHAR(255) NOT NULL,
-	`total_price` INT NOT NULL,
-	`order_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `order_state` ENUM('0', '1', '2') NOT NULL DEFAULT '0', -- 주문 상태 (0: 접수대기 / 1: 처리중 / 2: 주문완료) 
-    FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
-);
 
 -- 메뉴별 카테고리 테이블 (인기 메뉴, 세트 메뉴, 사이드메뉴, 음료 ...)
 CREATE TABLE `menu_categories` (
 	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
 	`menu_category` VARCHAR(255)	NOT NULL
 );
+
 
 -- 메뉴 정보 테이블
 CREATE TABLE `menus` (
@@ -62,43 +54,75 @@ CREATE TABLE `menus` (
     FOREIGN KEY (category_id) REFERENCES `menu_categories` (id) ON DELETE CASCADE
 );
 
+
 -- 메뉴 옵션(사이즈, 추가 토핑 등)
 CREATE TABLE `menu_options`(
 	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
-    `menu_id` BIGINT NOT NULL,
-    `option_name` VARCHAR(255) NOT NULL,
-    FOREIGN KEY (menu_id) REFERENCES `menus` (id) ON DELETE CASCADE
+    `option_name` VARCHAR(255) NOT NULL
 );
+
+
+-- 메뉴, 메뉴 옵션 연결 테이블
+CREATE TABLE `menu_option_group` (
+	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
+    `menu_id` BIGINT NOT NULL,
+    `menu_option_id` BIGINT NOT NULL
+);
+
+
+-- 주문 정보 테이블
+CREATE TABLE `orders` (
+	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
+    `store_id` BIGINT NOT NULL,
+	`delivery_address` VARCHAR(255) NOT NULL,
+	`order_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `order_state` ENUM('0', '1', '2') NOT NULL DEFAULT '0', -- 주문 상태 (0: 접수대기 / 1: 처리중 / 2: 주문완료) 
+    FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
+);
+
 
 -- 주문 목록 내 주문 1개 상세 정보 테이블
 CREATE TABLE `order_details` (
 	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
     `order_id` BIGINT NOT NULL,
     `menu_id` BIGINT NOT NULL,
-	`quantity` INT NOT NULL,
     FOREIGN KEY (order_id) REFERENCES `orders` (id) ON DELETE CASCADE,
     FOREIGN KEY (menu_id) REFERENCES `menus` (id) ON DELETE CASCADE
 );
 
+
 -- 메뉴 옵션의 세부사항(S, M, L ... 등)
 CREATE TABLE `menu_option_details`(
 	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
-    `option_id` BIGINT NOT NULL, -- 메뉴 옵션 테이블 id
-    `order_detail_id` BIGINT NOT NULL,
-    `option_detail_name` VARCHAR(255) NOT NULL,
+    `menu_option_id` BIGINT NOT NULL, -- 메뉴 옵션 테이블 id
+    `order_detail_name` BIGINT NOT NULL,
     `additional_fee` INT NOT NULL DEFAULT 0,
-    FOREIGN KEY (option_id) REFERENCES `menu_options` (id) ON DELETE CASCADE,
-    FOREIGN KEY (order_detail_id) REFERENCES `order_details` (id) ON DELETE CASCADE
+    FOREIGN KEY (menu_option_id) REFERENCES `menu_options` (id) ON DELETE CASCADE
 );
+
+
+-- 주문한 메뉴 옵션 연결 테이블
+CREATE TABLE `order_menu_option` (
+	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
+    `order_detail_id` BIGINT NOT NULL,
+    `menu_option_detail_id` BIGINT NOT NULL
+);
+
 
 -- 손님 정보 테이블
 CREATE TABLE `guests` (
 	`id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `order_id` BIGINT NOT NULL,
+<<<<<<< HEAD
     `nickname` VARCHAR(255) NOT NULL UNIQUE,
 	`profile_image` VARCHAR(255) DEFAULT '/images/profile/default.png',
+=======
+    `guest_nickname` VARCHAR(255) NOT NULL UNIQUE,
+	`profile_image` VARCHAR(255) DEFAULT "/images/profile/default.png",
+>>>>>>> develop
     FOREIGN KEY (order_id) REFERENCES `orders` (id) ON DELETE CASCADE   
 );
+
 
 -- 리뷰 정보 테이블
 CREATE TABLE `reviews` (
