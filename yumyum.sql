@@ -113,14 +113,9 @@ CREATE TABLE `order_menu_option` (
 CREATE TABLE `guests` (
 	`id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `order_id` BIGINT NOT NULL,
-<<<<<<< HEAD
-    `nickname` VARCHAR(255) NOT NULL UNIQUE,
-	`profile_image` VARCHAR(255) DEFAULT '/images/profile/default.png',
-=======
     `guest_nickname` VARCHAR(255) NOT NULL UNIQUE,
-	`profile_image` VARCHAR(255) DEFAULT "/images/profile/default.png",
->>>>>>> develop
-    FOREIGN KEY (order_id) REFERENCES `orders` (id) ON DELETE CASCADE   
+	`profile_image` VARCHAR(255) DEFAULT '/images/profile/default.png',
+    FOREIGN KEY (order_id) REFERENCES `orders` (id) ON DELETE CASCADE
 );
 
 
