@@ -95,7 +95,7 @@ CREATE TABLE `order_details` (
 CREATE TABLE `menu_option_details`(
 	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
     `menu_option_id` BIGINT NOT NULL, -- 메뉴 옵션 테이블 id
-    `option_detail_name` BIGINT NOT NULL,
+    `option_detail_name` VARCHAR(255) NOT NULL,
     `additional_fee` INT NOT NULL DEFAULT 0,
     FOREIGN KEY (menu_option_id) REFERENCES `menu_options` (id) ON DELETE CASCADE
 );
