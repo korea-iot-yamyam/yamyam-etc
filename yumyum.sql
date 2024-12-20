@@ -21,7 +21,7 @@ CREATE TABLE `stores` (
 	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
 	`owner_id` BIGINT NOT NULL,
 	`store_name` VARCHAR(255) NOT NULL,
-	`logo_url`	VARCHAR(255) NOT NULL DEFAULT "/images/profile/default2.png",
+	`logo_url`	VARCHAR(255) NOT NULL DEFAULT '/images/profile/default2.png',
 	`category` ENUM('치킨', '중식', '돈까스_회', '피자', '패스트푸드', '찜_탕', '족발_보쌈', '분식', '카페_디저트', '한식', '고기', '양식', '아시안', '야식', '도시락') NOT NULL,
 	`opening_time` DATETIME	NOT NULL,
 	`closing_time` DATETIME NOT NULL,
@@ -36,7 +36,8 @@ CREATE TABLE `stores` (
 -- 메뉴별 카테고리 테이블 (인기 메뉴, 세트 메뉴, 사이드메뉴, 음료 ...)
 CREATE TABLE `menu_categories` (
 	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
-	`menu_category` VARCHAR(255)	NOT NULL
+	`menu_category` VARCHAR(255)	NOT NULL,
+    `menu_category_sequence` INT NOT NULL UNIQUE
 );
 
 
@@ -46,7 +47,7 @@ CREATE TABLE `menus` (
     `store_id` BIGINT NOT NULL,
     `category_id` BIGINT NOT NULL,
 	`menu_name`	VARCHAR(255) NOT NULL,
-	`image_url`	VARCHAR(255) DEFAULT "/images/profile/default1.png",
+	`image_url`	VARCHAR(255) DEFAULT '/images/profile/default1.png',
 	`menu_description` TEXT,
     `menu_price` INT NOT NULL,
     `is_available` BOOLEAN NOT NULL	DEFAULT TRUE,
@@ -114,8 +115,8 @@ CREATE TABLE `guests` (
 	`id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `order_id` BIGINT NOT NULL,
     `guest_nickname` VARCHAR(255) NOT NULL UNIQUE,
-	`profile_image` VARCHAR(255) DEFAULT "/images/profile/default.png",
-    FOREIGN KEY (order_id) REFERENCES `orders` (id) ON DELETE CASCADE   
+	`profile_image` VARCHAR(255) DEFAULT '/images/profile/default.png',
+    FOREIGN KEY (order_id) REFERENCES `orders` (id) ON DELETE CASCADE
 );
 
 
