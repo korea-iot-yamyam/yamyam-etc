@@ -36,7 +36,8 @@ CREATE TABLE `stores` (
 -- 메뉴별 카테고리 테이블 (인기 메뉴, 세트 메뉴, 사이드메뉴, 음료 ...)
 CREATE TABLE `menu_categories` (
 	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
-	`menu_category` VARCHAR(255)	NOT NULL
+	`menu_category` VARCHAR(255)	NOT NULL,
+    `menu_category_sequence` INT NOT NULL UNIQUE
 );
 
 
