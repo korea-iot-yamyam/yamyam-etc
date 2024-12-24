@@ -54,11 +54,14 @@ INSERT INTO `orders` (`store_id`, `delivery_address`, `order_date`, `order_state
 
 select * from orders;
 
-insert into menu_categories values
-(default, '인기메뉴'),
-(default, '세트메뉴'),
-(default, '사이드메뉴'),
-(default, '음료');
+INSERT INTO menu_categories (menu_category, menu_category_sequence) VALUES
+('인기메뉴', 1),
+('세트메뉴', 2),
+('사이드메뉴', 3),
+('음료', 4);
+
+
+SELECT * FROM menu_categories;
 
 insert into menus values
 (default, 1, 1, '후라이드치킨', 'img~~~', '후라이드치킨입니다', 18000, true),
