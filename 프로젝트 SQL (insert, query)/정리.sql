@@ -1,3 +1,10 @@
+select * from orders;
+
+select 
+	u.id, u.user_id, s.owner_id, s.store_name, s.category
+from
+	users u 
+inner join stores s on s.owner_id = u.id;
 # 1 (1번가게) state - 1
 -- 1: 후라이드치킨 / 18000 (순살 1000)
 -- 2: 양념치킨 / 19000 (뼈 0 / 무추가 500)
@@ -250,5 +257,3 @@
 -- menu_total_price: 36000
 -- option_total_price: 3000
 -- sum_total_price: 39000
-
-select * from orders;
