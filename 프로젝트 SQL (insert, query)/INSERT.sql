@@ -1,4 +1,5 @@
-# INSERT - 포스트맨에서 직접 생성
+# INSERT 
+# users - 포스트맨에서 직접 생성
 insert into users values
 (default, 'user1', 'password1!!', 'aaa', 'aaa@exam.com', '01012341234', '1234567890', true, true),
 (default, 'user2', 'password2!!', 'bbb', 'bbb@exam.com', '01056785678', '0987654321', true, true),
