@@ -54,5 +54,3 @@ group by
     o.order_state
 order by
 	date(o.order_date), hour(o.order_date);
-    
-select * from orders;
