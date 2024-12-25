@@ -124,10 +124,9 @@ CREATE TABLE `guests` (
 CREATE TABLE `reviews` (
 	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
 	`order_id` BIGINT NOT NULL,
-    `guest_id` BIGINT NOT NULL,
 	`rating` INT, -- 별점
 	`review_date` DATE NOT NULL,
-	`review_content` TEXT,
+	`review_text` TEXT,
 	`is_reported` BOOLEAN DEFAULT FALSE, -- 신고 기능
     FOREIGN KEY (order_id) REFERENCES `orders` (id) ON DELETE CASCADE,
     FOREIGN KEY (guest_id) REFERENCES `guests` (id) ON DELETE CASCADE
