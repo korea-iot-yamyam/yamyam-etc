@@ -124,7 +124,6 @@ CREATE TABLE `guests` (
 CREATE TABLE `reviews` (
 	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
 	`order_id` BIGINT NOT NULL,
-    `guest_id` BIGINT NOT NULL,
 	`rating` INT, -- 별점
 	`review_date` DATE NOT NULL,
 	`review_text` TEXT,
