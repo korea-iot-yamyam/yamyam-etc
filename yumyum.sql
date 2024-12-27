@@ -36,8 +36,10 @@ CREATE TABLE `stores` (
 -- 메뉴별 카테고리 테이블 (인기 메뉴, 세트 메뉴, 사이드메뉴, 음료 ...)
 CREATE TABLE `menu_categories` (
 	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
+    `store_id` BIGINT NOT NULL,
 	`menu_category` VARCHAR(255)	NOT NULL,
-    `menu_category_sequence` INT NOT NULL UNIQUE
+    `menu_category_sequence` INT NOT NULL,
+    FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
 );
 
 
