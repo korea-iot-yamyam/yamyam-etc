@@ -21,12 +21,12 @@ CREATE TABLE `stores` (
 	`id` BIGINT	PRIMARY KEY AUTO_INCREMENT,
 	`owner_id` BIGINT NOT NULL,
 	`store_name` VARCHAR(255) NOT NULL,
-	`logo_url`	VARCHAR(255) NOT NULL DEFAULT '/images/profile/default2.png',
+	`logo_url`	LONGTEXT NOT NULL,
 	`category` ENUM('치킨', '중식', '돈까스_회', '피자', '패스트푸드', '찜_탕', '족발_보쌈', '분식', '카페_디저트', '한식', '고기', '양식', '아시안', '야식', '도시락') NOT NULL,
-	`opening_time` DATETIME	NOT NULL,
-	`closing_time` DATETIME NOT NULL,
-	`break_start_time` DATETIME,
-	`break_end_time` DATETIME,
+	`opening_time` TIME	NOT NULL,
+	`closing_time` TIME NOT NULL,
+	`break_start_time` TIME,
+	`break_end_time` TIME,
 	`address` VARCHAR(255),
 	`description` TEXT,
     FOREIGN KEY (owner_id) REFERENCES `users` (id) ON DELETE CASCADE
@@ -168,9 +168,9 @@ insert into users values
 select * from users;
 
 insert into stores values
-(default, 1, 'a_store', 'img~~~', '치킨', now(), now(), null, null, 'aaa시 aaa구 aaa동', '치킨 가게 입니다.'),
-(default, 2, 'b_store', "img~~~", '분식', now(), now(), null, null, 'bbb시 bbb구 bbb동', '분식 가게 입니다.'),
-(default, 3, 'c_store', 'img~~~', '양식', now(), now(), null, null, 'ccc시 ccc구 ccc동', '양식 가게 입니다.');
+(default, 1, 'a_store', '/images/profile/default1.png', '치킨', now(), now(), null, null, 'aaa시 aaa구 aaa동', '치킨 가게 입니다.'),
+(default, 2, 'b_store', "/images/profile/default2.png", '분식', now(), now(), null, null, 'bbb시 bbb구 bbb동', '분식 가게 입니다.'),
+(default, 3, 'c_store', '/images/profile/default3.png', '양식', now(), now(), null, null, 'ccc시 ccc구 ccc동', '양식 가게 입니다.');
 
 select * from orders;
 insert into orders values 
