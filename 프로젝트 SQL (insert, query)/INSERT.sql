@@ -3,7 +3,7 @@
 insert into users values
 (default, 'user1', 'password1!!', 'aaa', 'aaa@exam.com', '01012341234', '1234567890', true, true),
 (default, 'user2', 'password2!!', 'bbb', 'bbb@exam.com', '01056785678', '0987654321', true, true),
-(default, 'user3', 'password3!!', 'ccc', 'ccc@exam.com', '01090129012', '1122334455', true, true);
+(default, 'user3', 'password3!!', 'ccc', 'ccc@exam.com', '01056785678', '0927654321', true, true);
 
 insert into stores values
 (default, 1, 'a_store', 'img~~~', '치킨', now(), now(), null, null, 'aaa시 aaa구 aaa동', '치킨 가게 입니다.'),
