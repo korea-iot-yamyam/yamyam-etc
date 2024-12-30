@@ -1,9 +1,10 @@
 # INSERT 
 # users - 포스트맨에서 직접 생성
+# 스토어 순서 바꿔서 인서트하면 옵션까지 전부 아이디값 바꿔야됨 ㅇㅇ
 insert into users values
 (default, 'user1', 'password1!!', 'aaa', 'aaa@exam.com', '01012341234', '1234567890', true, true),
 (default, 'user2', 'password2!!', 'bbb', 'bbb@exam.com', '01056785678', '0987654321', true, true),
-(default, 'user3', 'password3!!', 'ccc', 'ccc@exam.com', '01056785678', '0927654321', true, true);
+(default, 'user3', 'password3!!', 'ccc', 'ccc@exam.com', '01090129012', '1122334455', true, true);
 
 insert into stores values
 (default, 1, 'a_store', 'img~~~', '치킨', now(), now(), null, null, 'aaa시 aaa구 aaa동', '치킨 가게 입니다.'),
@@ -53,26 +54,35 @@ INSERT INTO `orders` (`store_id`, `delivery_address`, `order_date`, `order_state
 (1, '대구 달서구 333-66', '2024-12-23 23:59:00', '2');
 
 
-select * from orders;
+select * from menu_categories;
 
 insert into menu_categories values
-(default, '인기메뉴', 1),
-(default, '세트메뉴', 2),
-(default, '사이드메뉴', 3),
-(default, '음료', 4);
+(default, 1, '인기메뉴', 1),
+(default, 1, '세트메뉴', 2),
+(default, 1, '사이드메뉴', 3),
+(default, 1, '음료', 4),
+(default, 2, '인기메뉴', 1),
+(default, 2, '세트메뉴', 2),
+(default, 2, '사이드메뉴', 3),
+(default, 2, '음료', 4),
+(default, 3, '인기메뉴', 1),
+(default, 3, '세트메뉴', 2),
+(default, 3, '사이드메뉴', 3),
+(default, 3, '음료', 4);
 
+select * from menus;
 insert into menus values
 (default, 1, 1, '후라이드치킨', 'img~~~', '후라이드치킨입니다', 18000, true),
 (default, 1, 1, '양념치킨', 'img~~~', '양념치킨입니다', 19000, true),
 (default, 1, 2, '1+1치킨', 'img~~~', '두마리 치킨입니다', 30000, true),
-(default, 2, 1, '떡볶이', 'img~~~', '떡볶이입니다', 9000, true),
-(default, 2, 1, '모둠튀김', 'img~~~', '모둠튀김입니다', 12000, true),
-(default, 2, 2, '떡+튀+순', 'img~~~', '떡볶이 + 튀김 + 순대입니다', 16000, true),
-(default, 2, 4, '콜라', 'img~~~', '콜라입니다', 2000, true),
-(default, 3, 1, '토마토 스파게티', 'img~~~', '토마토 스파게티입니다', 12000, true),
-(default, 3, 2, '크림 스파게티', 'img~~~', '크림 스파게티입니다', 12000, true),
-(default, 3, 3, '해쉬브라운', 'img~~~', '해쉬브라운입니다', 3000, true),
-(default, 3, 3, '감자고로케', 'img~~~', '감자고로케입니다', 2500, true);
+(default, 2, 5, '떡볶이', 'img~~~', '떡볶이입니다', 9000, true),
+(default, 2, 5, '모둠튀김', 'img~~~', '모둠튀김입니다', 12000, true),
+(default, 2, 6, '떡+튀+순', 'img~~~', '떡볶이 + 튀김 + 순대입니다', 16000, true),
+(default, 2, 8, '콜라', 'img~~~', '콜라입니다', 2000, true),
+(default, 3, 9, '토마토 스파게티', 'img~~~', '토마토 스파게티입니다', 12000, true),
+(default, 3, 9, '크림 스파게티', 'img~~~', '크림 스파게티입니다', 12000, true),
+(default, 3, 11, '해쉬브라운', 'img~~~', '해쉬브라운입니다', 3000, true),
+(default, 3, 11, '감자고로케', 'img~~~', '감자고로케입니다', 2500, true);
 
 insert into menu_options values
 (default, '뼈 유무'),
