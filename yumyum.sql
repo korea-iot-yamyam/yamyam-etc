@@ -69,7 +69,8 @@ CREATE TABLE `menu_options`(
 CREATE TABLE `menu_option_group` (
 	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
     `menu_id` BIGINT NOT NULL,
-    `menu_option_id` BIGINT NOT NULL
+    `menu_option_id` BIGINT NOT NULL,
+    FOREIGN KEY (menu_id) REFERENCES `menus`(id) ON DELETE CASCADE
 );
 
 
