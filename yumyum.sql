@@ -151,7 +151,7 @@ CREATE TABLE `review_event_notices` (
 	`id` BIGINT PRIMARY KEY AUTO_INCREMENT,
 	`store_id` BIGINT,
     `notice_date` DATETIME NOT NULL,
-	`notice_photo_url` VARCHAR(255),
+	`notice_photo_url` LONGTEXT,
     `notice_text`	TEXT,
 	FOREIGN KEY (store_id) REFERENCES `stores` (id) ON DELETE CASCADE
 );
