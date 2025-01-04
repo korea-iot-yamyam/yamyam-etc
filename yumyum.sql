@@ -129,7 +129,7 @@ CREATE TABLE `reviews` (
 	`order_id` BIGINT NOT NULL,
     `guest_id` BIGINT NOT NULL,
 	`store_id` BIGINT NOT NULL,
-	`rating` DOUBLE, -- 별점
+	`rating` INT, -- 별점
 	`review_date` DATETIME NOT NULL,
 	`review_text` TEXT,
 	`is_reported` BOOLEAN DEFAULT FALSE, -- 신고 기능
