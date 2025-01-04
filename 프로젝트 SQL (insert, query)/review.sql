@@ -76,3 +76,20 @@ VALUES
  VALUES (1, '/images/review1.png'), 
  (2, '/images/review2.png'),
  (3, '/images/review3.png');
+ 
+ 
+use YAMYAM;
+ 
+select * from stores;
+
+SELECT rating FROM reviews WHERE store_id = 3;
+
+
+ 
+ INSERT INTO `reviews` (`order_id`, `guest_id`, `store_id`, `rating`, `review_date`, `review_text`, `is_reported`) 
+VALUES  
+(1, 1, 3, 4.5, NOW(), '매우 맛있어요! 배송도 빨라서 좋았습니다.', FALSE),  -- '한식당 C'에 대한 리뷰
+(2, 2, 3, 3.0, NOW(), '피자는 괜찮았지만, 배달이 늦었어요.', FALSE),       -- '한식당 C'에 대한 리뷰
+(3, 3, 3, 5.0, NOW(), '한식은 언제나 최고입니다! 맛있었어요.', FALSE);     -- '한식당 C'에 대한 리뷰
+
+select * from reviews;
