@@ -28,6 +28,8 @@ CREATE TABLE `stores` (
 	`break_start_time` TIME,
 	`break_end_time` TIME,
 	`address` VARCHAR(255),
+    `detail_address` VARCHAR(255),
+    `detail2_address` VARCHAR(255),
 	`description` TEXT,
     FOREIGN KEY (owner_id) REFERENCES `users` (id) ON DELETE CASCADE
 );
