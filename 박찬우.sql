@@ -1,8 +1,3 @@
-insert into stores values
-(default, 1, 'a_store', 'img~~~', '치킨', now(), now(), null, null, 'aaa시 aaa구 aaa동', '치킨 가게 입니다.'),
-(default, 2, 'b_store', "img~~~", '분식', now(), now(), null, null, 'bbb시 bbb구 bbb동', '분식 가게 입니다.'),
-(default, 3, 'c_store', 'img~~~', '양식', now(), now(), null, null, 'ccc시 ccc구 ccc동', '양식 가게 입니다.');
-
 select * from orders;
 INSERT INTO `orders` (`store_id`, `delivery_address`, `order_date`, `order_state`) VALUES 
 (1, '부산 해운대구 123-45', '2024-12-15 10:00:00', '2'),
