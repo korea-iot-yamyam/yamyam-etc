@@ -12,7 +12,9 @@ CREATE TABLE `users` (
     `user_phone` VARCHAR(30) NOT NULL,
 	`user_business_number` VARCHAR(20) NOT NULL UNIQUE,
 	`privacy_policy_agreed`	BOOLEAN	NOT NULL DEFAULT FALSE, -- 개인 정보 동의
-	`marketing_agreed` BOOLEAN NOT NULL DEFAULT FALSE -- 마케팅 수신 동의
+	`marketing_agreed` BOOLEAN NOT NULL DEFAULT FALSE, -- 마케팅 수신 동의
+    `join_path` VARCHAR(5) NOT NULL COMMENT '가입경로 (HOME, KAKAO, NAVER)',
+    `sns_id` VARCHAR(255) DEFAULT NULL COMMENT 'OAuth 사용자 아이디'
 );
 
 
